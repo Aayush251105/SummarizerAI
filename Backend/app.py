@@ -4,8 +4,7 @@ from transformers import AutoTokenizer, T5ForConditionalGeneration # to load the
 import torch
 import re
 from pathlib import Path
-from fastapi.templating import Jinja2Templates # UI
-from fastapi.responses import HTMLResponse
+from fastapi.responses import FileResponse, HTMLResponse
 from fastapi.staticfiles import StaticFiles
 
 #initialize the FastAPI app
@@ -14,6 +13,7 @@ app = FastAPI(title="Text Summarizer App", description="Text Summarization using
 BASE_DIR = Path(__file__).resolve().parent.parent
 MODEL_DIR = BASE_DIR / "Model" / "saved_summary_model"
 FRONTEND_DIR = BASE_DIR / "Frontend"
+FRONTEND_DIST_DIR = FRONTEND_DIR / "dist"
 
 # model & Tokenizer loading
 model = T5ForConditionalGeneration.from_pretrained(MODEL_DIR)
@@ -27,9 +27,12 @@ else:
 
 model.to(device)
 
-# templating
-templates = Jinja2Templates(directory=FRONTEND_DIR)
-app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
+# React production assets. In development, run the Vite dev server from Frontend.
+app.mount(
+    "/assets",
+    StaticFiles(directory=FRONTEND_DIST_DIR / "assets", check_dir=False),
+    name="assets",
+)
 
 # Input schema for dialogue => String
 class DialogueInput(BaseModel):
@@ -79,5 +82,13 @@ async def summarize(dialogue_input: DialogueInput):
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
-    return templates.TemplateResponse(request, "index.html")
+    react_index = FRONTEND_DIST_DIR / "index.html"
+    if react_index.exists():
+        return FileResponse(react_index)
+
+    return HTMLResponse(
+        "React build not found. Run 'npm run build' inside the Frontend folder, "
+        "or use 'npm run dev' for the Vite development server.",
+        status_code=503,
+    )
 

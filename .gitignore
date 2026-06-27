@@ -27,6 +27,12 @@ logs/
 # Jupyter
 .ipynb_checkpoints/
 
+# React / Vite frontend
+Frontend/node_modules/
+Frontend/dist/
+Frontend/dist-ssr/
+Frontend/*.local
+
 # Model training outputs and large local artifacts
 Model/results/
 Model/Dataset/
