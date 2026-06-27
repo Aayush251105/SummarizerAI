@@ -1,0 +1,46 @@
+# Python cache and bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment and local settings
+.env
+.env.*
+!.env.example
+
+# IDE and OS files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Model training outputs and large local artifacts
+Model/results/
+Model/Dataset/
+Model/saved_summary_model/
+
+# PyTorch / Hugging Face generated files
+*.pt
+*.pth
+*.bin
+*.safetensors
+*.ckpt
+runs/
+wandb/
+mlruns/
+
+# Keep placeholder files if you add them later
+!.gitkeep
